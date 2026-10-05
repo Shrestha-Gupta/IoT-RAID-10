@@ -19,7 +19,6 @@ if not all([
 ]):
     raise RuntimeError("InfluxDB configuration is incomplete in .env")
 
-
 client = InfluxDBClient(
     url=INFLUX_URL,
     token=INFLUX_TOKEN,
@@ -32,12 +31,14 @@ write_api = client.write_api(
 
 
 def write_sensor_data(record):
-
     point = (
         Point("sensor_data")
         .field("temperature", float(record["temperature"]))
         .field("humidity", float(record["humidity"]))
         .field("distance", float(record["distance"]))
+        .field("soil_moisture", int(record["soil_moisture"]))
+        .field("gas_detected", int(bool(record["gas_detected"])))
+        .field("motion_detected", int(bool(record["motion_detected"])))
     )
 
     write_api.write(
